@@ -55,6 +55,34 @@ if not dfs:
 raca = st.radio("Selecione a raça:", list(dfs.keys()), horizontal=True)
 df = dfs[raca]
 
+# ─── Mapeamento flexível de colunas ──────────────────────────────────────────
+import unicodedata
+
+def normalizar(texto):
+    """Remove acentos e coloca em minúsculas para comparação."""
+    return unicodedata.normalize("NFD", str(texto)).encode("ascii", "ignore").decode().lower().strip()
+
+colunas_esperadas = {
+    "pai":      ["touro pai da femea", "touro pai da fzmea"],
+    "naab":     ["naab touro alta"],
+    "curto":    ["nome curto"],
+    "completo": ["nome completo"],
+    "inb":      ["inb %", "inb%"],
+    "haplo":    ["haplotipos", "haplo tipos"],
+}
+COL_MAP = {}
+for chave, opcoes in colunas_esperadas.items():
+    for col_real in df.columns:
+        if normalizar(col_real) in opcoes:
+            COL_MAP[chave] = col_real
+            break
+
+st.markdown("---")
+st.subheader(f"Consulta — {raca}")
+
+
+col1, col2 = st.columns(2)
+
 # ─── Funções de busca ─────────────────────────────────────────────────────────
 def sugestoes(col_key, texto):
     coluna = COL_MAP.get(col_key)
