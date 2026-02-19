@@ -63,7 +63,7 @@ def normalizar(texto):
     return unicodedata.normalize("NFD", str(texto)).encode("ascii", "ignore").decode().lower().strip()
 
 colunas_esperadas = {
-    "pai":      ["touro pai da femea"],
+    "pai":      ["touro pai da femea", "touro pai da fzmea"],
     "naab":     ["naab touro alta"],
     "curto":    ["nome curto"],
     "completo": ["nome completo"],
