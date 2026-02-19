@@ -5,7 +5,7 @@ import requests
 
 st.set_page_config(page_title="Consulta de Endogamia", page_icon="🐄", layout="wide")
 
-st.title("🐄 Consulta de Endogamia Bovina")
+st.title("Consulta de Endogamia Bovina")
 st.markdown("---")
 
 # ─── Links publicados do Google Sheets ───────────────────────────────────────
@@ -101,7 +101,7 @@ def buscar_linha(filtros):
 
 # ─── Touro pai da fêmea ───────────────────────────────────────────────────────
 with col1:
-    st.markdown("#### 🐮 Touro pai da fêmea")
+    st.markdown("#### Touro pai da fêmea")
     pai_texto = st.text_input("Digite o nome ou código:", key="pai_txt")
     pai_selecionado = ""
     if pai_texto:
@@ -113,7 +113,7 @@ with col1:
 
 # ─── Touro para cruzamento ────────────────────────────────────────────────────
 with col2:
-    st.markdown("#### 🐂 Touro para cruzamento")
+    st.markdown("#### Touro para cruzamento")
     campo_opcoes = {
         "NAAB touro Alta": "naab",
         "Nome curto":      "curto",
