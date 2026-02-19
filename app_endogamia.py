@@ -23,7 +23,7 @@ if logo_path.exists():
         <div style="display:flex; align-items:center; gap:18px; margin-bottom:8px;">
             <img src="data:image/jpeg;base64,{logo_b64}" style="height:64px;">
             <div>
-                <span style="font-size:2rem; font-weight:700; color:#1a3a6b;">Consulta de Endogamia Bovina</span><br>
+                <span style="font-size:2rem; font-weight:700; color:#1a3a6b;">Consulta de Endogamia - Alta Genetics</span><br>
                 <span style="font-size:0.95rem; color:#555;">Alta Genetics — Ferramenta de apoio técnico</span>
             </div>
         </div>
