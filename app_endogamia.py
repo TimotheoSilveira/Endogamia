@@ -86,6 +86,9 @@ with st.expander("🔍 Diagnóstico — clique aqui e me mande o resultado"):
     for i, col in enumerate(df.columns.tolist()):
         st.write(f"{i}: `{repr(col)}`")
     st.write(f"**COL_MAP resolvido:** {COL_MAP}")
+    col0 = df.columns[0]
+    st.write(f"**Bytes da coluna 0:** `{col0.encode('utf-8')}`")
+    st.write(f"**Normalizado:** `{normalizar(col0)}`")
 
 col1, col2 = st.columns(2)
 
