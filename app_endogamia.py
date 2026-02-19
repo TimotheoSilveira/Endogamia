@@ -1,113 +1,70 @@
 import streamlit as st
 import pandas as pd
-import requests
-import re
 from io import StringIO
+import requests
 
 st.set_page_config(page_title="Consulta de Endogamia", page_icon="🐄", layout="wide")
 
 st.title("🐄 Consulta de Endogamia Bovina")
 st.markdown("---")
 
-# ─── IDs dos arquivos no Google Drive ─────────────────────────────────────────
+# ─── Links publicados do Google Sheets ───────────────────────────────────────
 ARQUIVOS = {
-    "Holandês": "1DavabVaootf8pZ1TRawI8b7U8Z1NTpwh",
-    "Jersey":   "1dcdzqFsTbwyjR6RWrnFZabUJInw6PUA3",
+    "Holandês": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQFznVxvHhq5iX_gfW_KeHqa8GW2u41-0_7CtSrRtY5lFB-V8n7evH3EXcGQK428orZDCRsm4KfcfOI/pub?gid=1768377571&single=true&output=csv",
+    "Jersey":   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSEGo8e3USR_jKgQUN3A-Cej-oZTqAI9ji2B693e_nx_76Dd8fL4-RgYCZmRuuaHdVFxGt8Fvf6SgtB/pub?output=csv",
 }
 
-# ─── Download robusto (lida com aviso de vírus do Drive para arquivos grandes) ─
-@st.cache_data(show_spinner=False)
-def carregar_csv(file_id, nome):
-    session = requests.Session()
-
-    # 1ª tentativa — link direto via usercontent (mais confiável para CSVs grandes)
-    urls_tentativa = [
-        f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t",
-        f"https://drive.google.com/uc?export=download&id={file_id}",
-    ]
-
-    content = None
-    for url in urls_tentativa:
+@st.cache_data(show_spinner=False, ttl=3600)
+def carregar_planilha(url, nome):
+    try:
+        resp = requests.get(url, timeout=180)
+        resp.raise_for_status()
         try:
-            resp = session.get(url, timeout=180)
-            resp.raise_for_status()
+            texto = resp.content.decode("utf-8")
+        except UnicodeDecodeError:
+            texto = resp.content.decode("latin-1")
 
-            # Se retornou HTML (página de confirmação), extrai o token e tenta de novo
-            ctype = resp.headers.get("Content-Type", "")
-            if "text/html" in ctype:
-                token_match = re.search(r'confirm=([^&"]+)', resp.text)
-                uuid_match  = re.search(r'uuid=([^&"]+)', resp.text)
-                if token_match:
-                    confirm_url = (
-                        f"https://drive.usercontent.google.com/download"
-                        f"?id={file_id}&export=download"
-                        f"&confirm={token_match.group(1)}"
-                        + (f"&uuid={uuid_match.group(1)}" if uuid_match else "")
-                    )
-                    resp = session.get(confirm_url, timeout=180)
-                    resp.raise_for_status()
-
-            # Verifica se agora temos dados reais
-            if len(resp.content) > 1000 and b"<!DOCTYPE" not in resp.content[:100]:
-                content = resp.content
-                break
-
-        except Exception:
-            continue
-
-    if content is None:
-        st.error(f"❌ Não foi possível baixar a planilha **{nome}**. "
-                 "Verifique se o arquivo está público no Google Drive.")
-        return None
-
-    # Decodifica e detecta separador
-    try:
-        texto = content.decode("utf-8")
-    except UnicodeDecodeError:
-        texto = content.decode("latin-1")
-
-    amostra = texto[:4096]
-    sep = ";" if amostra.count(";") > amostra.count(",") else ","
-
-    try:
+        amostra = texto[:4096]
+        sep = ";" if amostra.count(";") > amostra.count(",") else ","
         df = pd.read_csv(StringIO(texto), sep=sep, dtype=str)
         df.columns = df.columns.str.strip()
         return df
     except Exception as e:
-        st.error(f"❌ Erro ao interpretar o CSV de **{nome}**: {e}")
+        st.error(f"❌ Erro ao carregar **{nome}**: {e}")
         return None
 
 # ─── Carregamento com barra de progresso ──────────────────────────────────────
 dfs = {}
 progress = st.progress(0, text="Iniciando carregamento…")
+total = len(ARQUIVOS)
 
-for i, (nome, fid) in enumerate(ARQUIVOS.items()):
-    progress.progress((i) / len(ARQUIVOS), text=f"Carregando planilha **{nome}**…")
-    df_temp = carregar_csv(fid, nome)
+for i, (nome, url) in enumerate(ARQUIVOS.items()):
+    progress.progress(i / total, text=f"Carregando **{nome}**…")
+    df_temp = carregar_planilha(url, nome)
     if df_temp is not None:
         dfs[nome] = df_temp
-    progress.progress((i + 1) / len(ARQUIVOS), text=f"✅ {nome} carregado ({len(df_temp):,} linhas)" if df_temp is not None else f"❌ Falha em {nome}")
+        progress.progress((i + 1) / total, text=f"✅ {nome} carregado — {len(df_temp):,} linhas")
 
 progress.empty()
 
 if not dfs:
-    st.error("Não foi possível carregar nenhuma planilha.")
+    st.error("Não foi possível carregar nenhuma planilha. Verifique os links do Google Sheets.")
     st.stop()
 
 # ─── Seleção de raça ──────────────────────────────────────────────────────────
 raca = st.radio("Selecione a raça:", list(dfs.keys()), horizontal=True)
 df = dfs[raca]
 
-# Mapeamento flexível de colunas (caso haja pequenas diferenças de nome)
-COL_MAP = {}
+# ─── Mapeamento flexível de colunas ──────────────────────────────────────────
 colunas_esperadas = {
-    "pai":       ["Touro pai da fêmea", "Touro pai da femea", "touro pai da fêmea"],
-    "naab":      ["NAAB touro Alta", "NAAB Touro Alta", "naab touro alta"],
-    "curto":     ["Nome curto", "nome curto"],
-    "completo":  ["Nome completo", "nome completo"],
-    "inb":       ["INB %", "INB%", "inb %"],
-    "haplo":     ["Haplótipos", "Haplotipos", "haplótipos"],
+    "pai":      ["Touro pai da fêmea", "Touro pai da femea", "touro pai da fêmea", "touro pai da femea"],
+    "naab":     ["NAAB touro Alta", "NAAB Touro Alta", "naab touro alta"],
+    "curto":    ["Nome curto", "nome curto"],
+    "completo": ["Nome completo", "nome completo"],
+    "inb":      ["INB %", "INB%", "inb %"],
+    "haplo":    ["Haplótipos", "Haplotipos", "haplótipos", "haplotipos"],
 }
+COL_MAP = {}
 for chave, opcoes in colunas_esperadas.items():
     for op in opcoes:
         if op in df.columns:
