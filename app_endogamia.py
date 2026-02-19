@@ -5,7 +5,13 @@ import requests
 from pathlib import Path
 import base64
 
-st.set_page_config(page_title="Consulta de Endogamia - Alta Genetics", layout="wide")
+from PIL import Image
+
+st.set_page_config(
+    page_title="Consulta de Endogamia",
+    page_icon=Image.open(Path(__file__).parent / "Logo_Alta_Triangulo.jpg"),
+    layout="wide"
+)
 
 # ─── Logo ─────────────────────────────────────────────────────────────────────
 logo_path = Path(__file__).parent / "Logo_Alta_Triangulo.jpg"
@@ -23,7 +29,7 @@ if logo_path.exists():
         <div style="display:flex; align-items:center; gap:18px; margin-bottom:8px;">
             <img src="data:image/jpeg;base64,{logo_b64}" style="height:64px;">
             <div>
-                <span style="font-size:2rem; font-weight:700; color:#1a3a6b;">Consulta de Endogamia - Alta Genetics</span><br>
+                <span style="font-size:2rem; font-weight:700; color:#1a3a6b;">Consulta de Endogamia Bovina</span><br>
                 <span style="font-size:0.95rem; color:#555;">Alta Genetics — Ferramenta de apoio técnico</span>
             </div>
         </div>
@@ -31,7 +37,7 @@ if logo_path.exists():
         unsafe_allow_html=True,
     )
 else:
-    st.title("Consulta de Endogamia - Alta Genetics")
+    st.title("🐄 Consulta de Endogamia Bovina")
 
 st.markdown("---")
 
@@ -128,7 +134,7 @@ def buscar_linha(filtros):
 
 # ─── Touro pai da fêmea ───────────────────────────────────────────────────────
 with col1:
-    st.markdown("#### Touro pai da fêmea")
+    st.markdown("#### 🐮 Touro pai da fêmea")
     pai_texto = st.text_input("Digite o nome ou código:", key="pai_txt")
     pai_selecionado = ""
     if pai_texto:
@@ -140,7 +146,7 @@ with col1:
 
 # ─── Touro para cruzamento ────────────────────────────────────────────────────
 with col2:
-    st.markdown("#### Touro para cruzamento")
+    st.markdown("#### 🐂 Touro para cruzamento")
     campo_opcoes = {
         "NAAB touro Alta": "naab",
         "Nome curto":      "curto",
