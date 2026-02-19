@@ -168,8 +168,21 @@ if filtros:
                     st.markdown(f"**Nome completo:**  \n{row.get(COL_MAP.get('completo', ''), '—')}")
                 with c3:
                     inb_col = COL_MAP.get("inb", "")
-                    inb = row.get(inb_col, "—")
-                    st.metric("INB %", inb if pd.notna(inb) and str(inb).strip() else "—")
+                    inb_raw = row.get(inb_col, "")
+                    inb_str = str(inb_raw).strip().replace(",", ".") if pd.notna(inb_raw) else ""
+                    st.metric("INB %", inb_str if inb_str else "—")
+                    try:
+                        inb_val = float(inb_str)
+                        if inb_val > 18:
+                            st.error("🔴 Endogamia muito alta!")
+                        elif inb_val >= 12:
+                            st.warning("🟠 Nível crítico de endogamia!")
+                        elif inb_val > 6.25:
+                            st.warning("🟡 Avaliar com um técnico")
+                        else:
+                            st.success("🟢 OK — sem efeitos de endogamia")
+                    except (ValueError, TypeError):
+                        pass
                 with c4:
                     hap_col = COL_MAP.get("haplo", "")
                     hap = row.get(hap_col, "")
