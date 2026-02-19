@@ -56,19 +56,25 @@ raca = st.radio("Selecione a raça:", list(dfs.keys()), horizontal=True)
 df = dfs[raca]
 
 # ─── Mapeamento flexível de colunas ──────────────────────────────────────────
+import unicodedata
+
+def normalizar(texto):
+    """Remove acentos e coloca em minúsculas para comparação."""
+    return unicodedata.normalize("NFD", str(texto)).encode("ascii", "ignore").decode().lower().strip()
+
 colunas_esperadas = {
-    "pai":      ["Touro pai da fêmea", "Touro pai da femea", "touro pai da fêmea", "touro pai da femea"],
-    "naab":     ["NAAB touro Alta", "NAAB Touro Alta", "naab touro alta"],
-    "curto":    ["Nome curto", "nome curto"],
-    "completo": ["Nome completo", "nome completo"],
-    "inb":      ["INB %", "INB%", "inb %"],
-    "haplo":    ["Haplótipos", "Haplotipos", "haplótipos", "haplotipos"],
+    "pai":      ["touro pai da femea"],
+    "naab":     ["naab touro alta"],
+    "curto":    ["nome curto"],
+    "completo": ["nome completo"],
+    "inb":      ["inb %", "inb%"],
+    "haplo":    ["haplotipos", "haplo tipos"],
 }
 COL_MAP = {}
 for chave, opcoes in colunas_esperadas.items():
-    for op in opcoes:
-        if op in df.columns:
-            COL_MAP[chave] = op
+    for col_real in df.columns:
+        if normalizar(col_real) in opcoes:
+            COL_MAP[chave] = col_real
             break
 
 st.markdown("---")
