@@ -94,11 +94,6 @@ if not dfs:
     st.error("Não foi possível carregar nenhuma planilha.")
     st.stop()
 
-# ─── DEBUG: mostra colunas encontradas (remover após confirmar que funciona) ──
-with st.expander("🔍 Diagnóstico — colunas encontradas nas planilhas"):
-    for nome, df_d in dfs.items():
-        st.write(f"**{nome}** ({len(df_d):,} linhas) — Colunas: {list(df_d.columns)}")
-
 # ─── Seleção de raça ──────────────────────────────────────────────────────────
 raca = st.radio("Selecione a raça:", list(dfs.keys()), horizontal=True)
 df = dfs[raca]
