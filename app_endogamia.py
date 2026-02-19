@@ -74,6 +74,13 @@ for chave, opcoes in colunas_esperadas.items():
 st.markdown("---")
 st.subheader(f"Consulta — {raca}")
 
+# Diagnóstico temporário
+with st.expander("🔍 Diagnóstico — clique aqui e me mande o resultado"):
+    st.write(f"**Colunas encontradas em {raca}:**")
+    for i, col in enumerate(df.columns.tolist()):
+        st.write(f"{i}: `{repr(col)}`")
+    st.write(f"**COL_MAP resolvido:** {COL_MAP}")
+
 col1, col2 = st.columns(2)
 
 # ─── Funções de busca ─────────────────────────────────────────────────────────
