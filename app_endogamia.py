@@ -5,7 +5,7 @@ import requests
 from pathlib import Path
 import base64
 
-st.set_page_config(page_title="Consulta de Endogamia", page_icon="🐄", layout="wide")
+st.set_page_config(page_title="Consulta de Endogamia - Alta Genetics", layout="wide")
 
 # ─── Logo ─────────────────────────────────────────────────────────────────────
 logo_path = Path(__file__).parent / "Logo_Alta_Triangulo.jpg"
