@@ -31,7 +31,7 @@ if logo_path.exists():
         unsafe_allow_html=True,
     )
 else:
-    st.title("🐄 Consulta de Endogamia Bovina")
+    st.title("Consulta de Endogamia - Alta Genetics")
 
 st.markdown("---")
 
