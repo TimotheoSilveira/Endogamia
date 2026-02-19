@@ -185,6 +185,4 @@ if filtros:
 else:
     st.info("ℹ️ Preencha pelo menos um campo acima para realizar a consulta.")
 
-# ─── Prévia da planilha ───────────────────────────────────────────────────────
-with st.expander("📋 Visualizar amostra da planilha carregada"):
-    st.dataframe(df.head(50), use_container_width=True)
+
