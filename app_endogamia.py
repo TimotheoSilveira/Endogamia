@@ -2,10 +2,37 @@ import streamlit as st
 import pandas as pd
 from io import StringIO
 import requests
+from pathlib import Path
+import base64
 
 st.set_page_config(page_title="Consulta de Endogamia", page_icon="🐄", layout="wide")
 
-st.title("Consulta de Endogamia Bovina")
+# ─── Logo ─────────────────────────────────────────────────────────────────────
+logo_path = Path(__file__).parent / "Logo_Alta_Triangulo.jpg"
+
+def logo_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+if logo_path.exists():
+    logo_b64 = logo_base64(logo_path)
+
+    # Cabeçalho com logo + título
+    st.markdown(
+        f"""
+        <div style="display:flex; align-items:center; gap:18px; margin-bottom:8px;">
+            <img src="data:image/jpeg;base64,{logo_b64}" style="height:64px;">
+            <div>
+                <span style="font-size:2rem; font-weight:700; color:#1a3a6b;">Consulta de Endogamia Bovina</span><br>
+                <span style="font-size:0.95rem; color:#555;">Alta Genetics — Ferramenta de apoio técnico</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.title("🐄 Consulta de Endogamia Bovina")
+
 st.markdown("---")
 
 # ─── Links publicados do Google Sheets ───────────────────────────────────────
@@ -101,7 +128,7 @@ def buscar_linha(filtros):
 
 # ─── Touro pai da fêmea ───────────────────────────────────────────────────────
 with col1:
-    st.markdown("#### Touro pai da fêmea")
+    st.markdown("#### 🐮 Touro pai da fêmea")
     pai_texto = st.text_input("Digite o nome ou código:", key="pai_txt")
     pai_selecionado = ""
     if pai_texto:
@@ -113,7 +140,7 @@ with col1:
 
 # ─── Touro para cruzamento ────────────────────────────────────────────────────
 with col2:
-    st.markdown("#### Touro para cruzamento")
+    st.markdown("#### 🐂 Touro para cruzamento")
     campo_opcoes = {
         "NAAB touro Alta": "naab",
         "Nome curto":      "curto",
@@ -184,5 +211,18 @@ if filtros:
                         st.success("✅ Nenhum haplótipo identificado")
 else:
     st.info("ℹ️ Preencha pelo menos um campo acima para realizar a consulta.")
+
+# ─── Rodapé ───────────────────────────────────────────────────────────────────
+st.markdown("---")
+if logo_path.exists():
+    st.markdown(
+        f"""
+        <div style="display:flex; align-items:center; gap:12px; opacity:0.7;">
+            <img src="data:image/jpeg;base64,{logo_b64}" style="height:36px;">
+            <span style="font-size:0.85rem; color:#555;">© Alta Genetics — Todos os direitos reservados</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
