@@ -45,8 +45,7 @@ st.markdown("---")
 ARQUIVOS = {
     "Holandês": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQFznVxvHhq5iX_gfW_KeHqa8GW2u41-0_7CtSrRtY5lFB-V8n7evH3EXcGQK428orZDCRsm4KfcfOI/pub?gid=1768377571&single=true&output=csv",
     "Jersey": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSEGo8e3USR_jKgQUN3A-Cej-oZTqAI9ji2B693e_nx_76Dd8fL4-RgYCZmRuuaHdVFxGt8Fvf6SgtB/pub?output=csv"
-    "Gir": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTktAIBEfKJNiPairfwZFgDyOKQM_nMB919Ymnbf0aTwrw_KGnBbajxcTDTz9In07Z7g0eylIMvkso3/pub?output=csv"
-    "Girolando": "https://docs.google.com/spreadsheets/d/e/2PACX-1vShRhdnhk12SdkKE4JCMNLWibGeOKfZm3QpatmZ7erIjXpIzFPkONF9uD5TOIL3dH1xjeKF4AmKwJbQ/pub?output=csv",
+    ,
 }
 
 @st.cache_data(show_spinner=False, ttl=3600)
